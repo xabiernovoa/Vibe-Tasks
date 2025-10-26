@@ -26,4 +26,13 @@ Mejoras posibles (futuras):
 - Sincronización con backend o export/import.
 - Notificaciones/recordatorios.
 
+
+  Imagenes:
+  <img width="1920" height="1048" alt="Captura de pantalla" src="https://github.com/user-attachments/assets/26c8214c-1eaa-4a9a-9732-ec97d34ac433" />
+  <img width="1920" height="1048" alt="Captura de pantalla do 2025-10-26 19-48-31" src="https://github.com/user-attachments/assets/d4f1df37-003b-4242-ba1b-beebb4bf4d56" />
+<img width="1920" height="1048" alt="Captura de pantalla do 2025-10-26 19-48-39" src="https://github.com/user-attachments/assets/aa37ce55-f1e3-4f9b-ba2d-0cd380252322" />
+<img width="1920" height="1048" alt="Captura de pantalla do 2025-10-26 19-49-46" src="https://github.com/user-attachments/assets/6f0e8636-e524-4a04-b51e-9f5ff1281e92" />
+
+
+
 Licencia: MIT (código de ejemplo)
