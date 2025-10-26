@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Vibe Tasks — Pila de Prioridades</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app-header">
+        <div class="brand">
+          <h1>Vibe Tasks</h1>
+          <p class="tag">Pila de prioridades — arrastra para reordenar</p>
+        </div>
+        <div class="controls">
+          <div class="control-row search-row">
+            <input id="search" class="search" placeholder="Buscar tareas..." aria-label="Buscar tareas" />
+            <select id="tag-filter" class="search" aria-label="Filtrar por etiqueta">
+              <option value="all">Todas las etiquetas</option>
+            </select>
+          </div>
+
+          <div class="control-row view-row" role="tablist" aria-label="Vistas">
+            <button id="btn-view-list" class="btn" role="tab">Lista</button>
+            <button id="btn-view-cal" class="btn" role="tab">Calendario</button>
+            <button id="btn-stats" class="btn" role="tab">Estadísticas</button>
+          </div>
+
+          <div class="control-row actions-row">
+            <button id="btn-new" class="btn primary">Nueva tarea</button>
+            <div class="more-wrapper">
+              <button id="btn-more" class="btn btn-ghost" aria-haspopup="true" aria-expanded="false" aria-controls="more-menu">•••</button>
+              <div id="more-menu" class="more-menu" role="menu" aria-hidden="true">
+                <button id="btn-config" class="btn" role="menuitem">Configuración</button>
+                <button id="btn-theme" class="btn" role="menuitem">Tema</button>
+                <button id="btn-export" class="btn" role="menuitem">Exportar</button>
+                <button id="btn-import" class="btn" role="menuitem">Importar</button>
+              </div>
+            </div>
+            <input id="import-file" type="file" accept="application/json" style="display:none" />
+          </div>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="list-area">
+          <div id="tasks-list" class="tasks-list" aria-live="polite"></div>
+          <div id="calendar" class="calendar hidden" role="application" aria-label="Calendario mensual"></div>
+        </section>
+
+        <aside class="legend">
+          <h3>Leyenda</h3>
+          <ul>
+            <li><span class="dot green"></span> Baja (verde)</li>
+            <li><span class="dot orange"></span> Media (naranja)</li>
+            <li><span class="dot red"></span> Alta (rojo)</li>
+          </ul>
+        </aside>
+      </main>
+
+      <!-- Modal: Nueva tarea -->
+      <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-card">
+          <h2>Nueva tarea</h2>
+          <form id="task-form">
+            <label>Título <input name="title" required maxlength="120" /></label>
+            <label>Descripción <textarea name="description" rows="3"></textarea></label>
+            <label>Etiquetas (separadas por coma) <input name="tags" placeholder="trabajo,personal,urgent" /></label>
+            <label>Subtareas (una por línea) <textarea name="subtasks" rows="4" placeholder="Subtarea 1\nSubtarea 2"></textarea></label>
+            <label>Recurrencia
+              <select name="recurrence">
+                <option value="none">Ninguna</option>
+                <option value="daily">Diaria</option>
+                <option value="weekly">Semanal</option>
+                <option value="monthly">Mensual</option>
+              </select>
+            </label>
+              <label>Fecha de entrega (opcional)
+                <div class="row">
+                  <input type="date" name="dueDate" />
+                  <input type="time" name="dueTime" />
+                </div>
+              </label>
+              <input type="hidden" name="id" />
+            <label>Prioridad inicial
+              <select name="priority">
+                <option value="0">Baja (verde)</option>
+                <option value="1">Media (naranja)</option>
+                <option value="2">Alta (rojo)</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button type="button" id="btn-cancel" class="btn">Cancelar</button>
+              <button class="btn primary" type="submit" id="submit-create">Crear</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal: Configuración -->
+      <div id="modal-config" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-card">
+          <h2>Configuración de promoción</h2>
+          <form id="config-form">
+            <label>Días o menos para pasar a prioridad media
+              <input type="number" name="mediumDays" min="0" step="1" />
+            </label>
+            <label>Días o menos para pasar a prioridad alta
+              <input type="number" name="highDays" min="0" step="1" />
+            </label>
+            <label><input type="checkbox" name="notifications" /> Habilitar notificaciones locales</label>
+            <label><input type="checkbox" name="lightTheme" /> Tema claro (light)</label>
+            <p class="note">Si no hay fecha de entrega la prioridad no cambia automáticamente.</p>
+            <div class="form-actions">
+              <button type="button" id="btn-config-cancel" class="btn">Cancelar</button>
+              <button class="btn primary" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <footer class="app-footer">
+        <small>Guardado localmente en tu navegador • Hecho con cariño</small>
+      </footer>
+    </div>
+
+      <!-- Modal: Estadísticas -->
+      <div id="modal-stats" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-card">
+          <h2>Estadísticas</h2>
+          <div id="stats-content">
+            <!-- dinamically filled -->
+          </div>
+          <div class="form-actions">
+            <button type="button" id="btn-stats-close" class="btn">Cerrar</button>
+            <button type="button" id="btn-export-csv" class="btn primary">Exportar CSV</button>
+          </div>
+        </div>
+      </div>
+
+    <!-- Toast container -->
+    <div id="toasts" class="toasts" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
